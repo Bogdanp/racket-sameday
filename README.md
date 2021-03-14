@@ -1,6 +1,6 @@
 # sameday
 
-A Racket client for the [Sameday].
+A Racket client for the [Sameday] API.
 
 ## License
 
