@@ -60,7 +60,7 @@
              (set-token-str! t (hash-ref j 'token))]
 
             [(http:response #:status-code code)
-             (oops "authentication failed~n  status code: ~a~n  response: ~e" code (http:response-body resp))]))))))
+             (oops "authentication failed~n  status code: ~a~n  response: ~s" code (http:response-body resp))]))))))
 
 (define (oops msg . args)
   (raise (exn:fail:sameday
@@ -104,7 +104,7 @@
                       args))
 
      (when (>= (http:response-status-code resp) 400)
-       (oops "request failed~n  status code: ~a~n  body: ~e"
+       (oops "request failed~n  status code: ~a~n  body: ~s"
              (http:response-status-code resp)
              (http:response-body resp)))
 
