@@ -6,5 +6,6 @@
                "gregor-lib"
                "http-easy"))
 (define build-deps '("racket-doc"
+                     "rackunit-lib"
                      "scribble-lib"))
 (define scribblings '(("sameday.scrbl")))

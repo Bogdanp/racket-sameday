@@ -304,7 +304,7 @@
        (for/fold ([res null])
                  ([x (in-list v)]
                   [i (in-naturals)])
-         (append (help (string->symbol (format "~a[~a]" k i)) x)))]
+         (append (help (string->symbol (format "~a[~a]" k i)) x) res))]
 
       [else
        (list (cons k (~a v)))]))
@@ -312,3 +312,29 @@
   (for/fold ([res null])
             ([p (in-list params)])
     (append (help (car p) (cdr p)) res)))
+
+(module+ test
+  (require rackunit)
+  (check-equal?
+   (sort
+    #:key car
+    (arraify
+     `((a . 1)
+       (b . 2)
+       (c . (1 2 3))
+       (d . ,(list
+              (hasheq 'a "d0a" 'b "d0b")
+              (hasheq 'a "d1a" 'b "d1b")))))
+    symbol<?)
+   (sort
+    #:key car
+    `((a . "1")
+      (b . "2")
+      (|c[0]| . "1")
+      (|c[1]| . "2")
+      (|c[2]| . "3")
+      (|d[0][a]| . "d0a")
+      (|d[0][b]| . "d0b")
+      (|d[1][a]| . "d1a")
+      (|d[1][b]| . "d1b"))
+    symbol<?)))
