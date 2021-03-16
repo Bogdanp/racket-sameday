@@ -1,8 +1,9 @@
-#lang racket
+#lang racket/base
 
 (require gregor
          (prefix-in http: net/http-easy)
          racket/contract
+         racket/format
          "client.rkt"
          "view.rkt")
 
@@ -242,9 +243,9 @@
 ;; counties & cities ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (get-counties [name #f]
-                       #:page [page 1]
-                       #:per-page [per-page 100]
-                       #:client [c (current-client)])
+                      #:page [page 1]
+                      #:per-page [per-page 100]
+                      #:client [c (current-client)])
   (define params
     (filter cdr `((name . ,name)
                   (page . ,(~a page))
@@ -252,11 +253,11 @@
   (get c "/api/geolocation/county" #:params params))
 
 (define (get-cities [name #f]
-                     #:county-id [county-id #f]
-                     #:postal-code [postal-code #f]
-                     #:page [page 1]
-                     #:per-page [per-page 100]
-                     #:client [c (current-client)])
+                    #:county-id [county-id #f]
+                    #:postal-code [postal-code #f]
+                    #:page [page 1]
+                    #:per-page [per-page 100]
+                    #:client [c (current-client)])
   (define params
     (filter cdr `((name . ,name)
                   (county . ,(maybe-~a county-id))
