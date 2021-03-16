@@ -311,7 +311,7 @@
       [(not v) null]
 
       [(hash? v)
-       (for/list ([(s-k s-v) (in-hash v)])
+       (for/list ([(s-k s-v) (in-hash v)] #:when s-v)
          (cons (string->symbol (format "~a[~a]" k s-k)) (~a s-v)))]
 
       [(list? v)
@@ -329,26 +329,34 @@
 
 (module+ test
   (require rackunit)
-  (check-equal?
-   (sort
-    #:key car
-    (arraify
-     `((a . 1)
-       (b . 2)
-       (c . (1 2 3))
-       (d . ,(list
-              (hasheq 'a "d0a" 'b "d0b")
-              (hasheq 'a "d1a" 'b "d1b")))))
-    symbol<?)
-   (sort
-    #:key car
-    `((a . "1")
-      (b . "2")
-      (|c[0]| . "1")
-      (|c[1]| . "2")
-      (|c[2]| . "3")
-      (|d[0][a]| . "d0a")
-      (|d[0][b]| . "d0b")
-      (|d[1][a]| . "d1a")
-      (|d[1][b]| . "d1b"))
-    symbol<?)))
+
+  (test-case "handles nested data"
+    (check-equal?
+     (sort
+      #:key car
+      (arraify
+       `((a . 1)
+         (b . 2)
+         (c . (1 2 3))
+         (d . ,(list
+                (hasheq 'a "d0a" 'b "d0b")
+                (hasheq 'a "d1a" 'b "d1b")))))
+      symbol<?)
+     (sort
+      #:key car
+      `((a . "1")
+        (b . "2")
+        (|c[0]| . "1")
+        (|c[1]| . "2")
+        (|c[2]| . "3")
+        (|d[0][a]| . "d0a")
+        (|d[0][b]| . "d0b")
+        (|d[1][a]| . "d1a")
+        (|d[1][b]| . "d1b"))
+      symbol<?)))
+
+  (test-case "skips false hash fields"
+    (check-equal?
+     (arraify
+      `((a . ,(parcel-dimensions #:weight 10))))
+     `((|a[weight]| . "10")))))
