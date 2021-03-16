@@ -227,10 +227,10 @@
 (define (call-with-awb-pdf awb f
                            #:type [type 'A6]
                            #:client [c (current-client)])
-  (define res
-    (get c (~a "/api/awb/download/" awb "/" type) #:stream? #t))
+  (define res #f)
   (dynamic-wind
-    void
+    (lambda ()
+      (set! res (get c (~a "/api/awb/download/" awb "/" type) #:stream? #t)))
     (lambda ()
       (f (http:response-output res)))
     (lambda ()
