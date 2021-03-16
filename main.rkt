@@ -169,7 +169,7 @@
   county
   reason
   transit-location
-  [(awb parcel-awb-number)]
+  [(awb parcelAwbNumber)]
   [(details parcelDetails)]
   [(returning? inReturn)]))
 
