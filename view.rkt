@@ -38,7 +38,7 @@
    #:with (mk-kwarg ...) (flatten
                           (for/list ([fld-name (in-list (syntax-e #'(fld.name ...)))])
                             (define kwd (string->keyword (symbol->string (syntax-e fld-name))))
-                            (list kwd fld-name)))
+                            (list kwd #`(#,fld-name #f))))
    #:with (mk-arg ...) (flatten
                         (for/list ([fld-name (in-list (syntax-e #'(fld.name ...)))]
                                    [fld-id (in-list (syntax-e #'(fld.field-id ...)))]
