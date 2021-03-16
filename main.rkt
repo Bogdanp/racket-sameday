@@ -55,7 +55,7 @@
  page/c)
 
 (define cents/c
-  (and exact-integer? (>=/c 100)))
+  (and/c exact-integer? (>=/c 100)))
 
 (define package-type/c
   (or/c 'parcel 'envelope 'large))
@@ -92,7 +92,7 @@
  contact
  (id
   name
-  phone-number
+  [(phone-number phone)]
   [(default? defaultContactPerson)]))
 
 
@@ -108,23 +108,22 @@
   email))
 
 (json-view
+ awb
+ ([(number awbNumber)]
+  [cost #:reader number->cents #:writer pp-cents]
+  parcels))
+
+(json-view
+ awb-estimate
+ ([amount #:reader number->cents #:writer pp-cents]
+  currency))
+
+(json-view
  awb-status
  ([(parcels parcelsStatus)]
   [(history expeditionHistory)]
   [(summary expeditionSummary)]
   [(expedition expeditionStatus)]))
-
-(json-view
- awb-estimate
- (amount
-  currency
-  time))
-
-(json-view
- awb
- ([(number awbNumber)]
-  cost
-  parcels))
 
 (json-view
  expedition-history
@@ -170,7 +169,9 @@
   county
   reason
   transit-location
-  parcel-awb-number))
+  [(awb parcel-awb-number)]
+  [(details parcelDetails)]
+  [(returning? inReturn)]))
 
 (json-view
  parcel-dimensions
@@ -194,8 +195,8 @@
                      #:insured-value [insured-value 0]
                      #:cod-amount [cod-amount 0]
                      #:reference [reference #f]
-                     #:client [c (current-client)]
-                     #:estimate? [estimate? #f])
+                     #:estimate? [estimate? #f]
+                     #:client [c (current-client)])
   (define weight
     (for/sum ([dim (in-list parcel-dimensions)])
       (parcel-dimensions-weight dim)))
@@ -222,9 +223,6 @@
 (define (delete-awb! awb [c (current-client)])
   (void (delete c (~a "/api/awb/" awb))))
 
-(define (get-awb-status awb [c (current-client)])
-  (get c (~a "/api/client/awb/" awb "/status")))
-
 (define (call-with-awb-pdf awb f
                            #:type [type 'A6]
                            #:client [c (current-client)])
@@ -236,6 +234,9 @@
       (f (http:response-output res)))
     (lambda ()
       (http:response-close! res))))
+
+(define (get-awb-status awb [c (current-client)])
+  (get c (~a "/api/client/awb/" awb "/status")))
 
 
 ;; counties & cities ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -270,8 +271,8 @@
 (json-view
  pickup-point
  (id
-  county
-  city
+  [(county-id county)]
+  [(city-id city)]
   address
   [(default? defaultPickupPoint)]
   [(contacts pickupPointContactPerson)]
@@ -301,6 +302,9 @@
 
 (define (maybe-~a v)
   (and v (~a v)))
+
+(define (number->cents v)
+  (inexact->exact (round (* v 100))))
 
 (define (pp-cents v)
   (~r (/ v 100) #:precision '(= 2)))

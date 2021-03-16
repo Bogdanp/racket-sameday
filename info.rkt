@@ -5,7 +5,8 @@
 (define deps '("base"
                "gregor-lib"
                "http-easy"))
-(define build-deps '("racket-doc"
+(define build-deps '("gregor-doc"
+                     "racket-doc"
                      "rackunit-lib"
                      "scribble-lib"))
 (define scribblings '(("sameday.scrbl")))
