@@ -16,17 +16,18 @@
                           (#:type (or/c 'A4 'A6)
                            #:client client?)
                           any)]
+  [create-awb! (->* (recipient?
+                     #:service-id exact-positive-integer?
+                     #:pickup-point-id exact-positive-integer?
+                     #:contact-person-id exact-positive-integer?)
+                    (#:package-type package-type/c
+                     #:parcel-dimensions (listof parcel-dimensions?)
+                     #:insured-value cents/c
+                     #:cod-amount cents/c
+                     #:client client?
+                     #:estimate? boolean?)
+                    (or/c awb? awb-estimate?))]
   [delete-awb! (->* (string?) (client?) void?)]
-  [estimate-awb (->* (recipient?
-                      #:service-id exact-positive-integer?
-                      #:pickup-point-id exact-positive-integer?
-                      #:contact-person-id exact-positive-integer?)
-                     (#:package-type package-type/c
-                      #:parcel-dimensions (listof parcel-dimensions?)
-                      #:insured-value cents/c
-                      #:cod-amount cents/c
-                      #:client client?)
-                     awb-estimate?)]
   [get-awb-status (->* (string?) (client?) awb-status?)]
   [get-counties (->* ()
                      (string?
@@ -120,6 +121,12 @@
   time))
 
 (json-view
+ awb
+ ([(number awbNumber)]
+  cost
+  parcels))
+
+(json-view
  expedition-history
  (status-id
   status
@@ -178,18 +185,17 @@
     [(envelope) 1]
     [(large) 2]))
 
-(define (delete-awb! awb [c (current-client)])
-  (void (delete c (~a "/api/awb/" awb))))
-
-(define (estimate-awb recipient
-                      #:service-id service-id
-                      #:pickup-point-id pickup-point-id
-                      #:contact-person-id contact-person-id
-                      #:package-type [package-type 'parcel]
-                      #:parcel-dimensions [parcel-dimensions null]
-                      #:insured-value [insured-value 0]
-                      #:cod-amount [cod-amount 0]
-                      #:client [c (current-client)])
+(define (create-awb! recipient
+                     #:service-id service-id
+                     #:pickup-point-id pickup-point-id
+                     #:contact-person-id contact-person-id
+                     #:package-type [package-type 'parcel]
+                     #:parcel-dimensions [parcel-dimensions null]
+                     #:insured-value [insured-value 0]
+                     #:cod-amount [cod-amount 0]
+                     #:reference [reference #f]
+                     #:client [c (current-client)]
+                     #:estimate? [estimate? #f])
   (define weight
     (for/sum ([dim (in-list parcel-dimensions)])
       (parcel-dimensions-weight dim)))
@@ -197,7 +203,7 @@
     `((service . ,(~a service-id))
       (pickupPoint . ,(~a pickup-point-id))
       (thirdPartyPickup . "0")
-      (contactPerson . ,(maybe-~a contact-person-id))
+      (contactPerson . ,(~a contact-person-id))
       (packageType . ,(~a (package-type-id package-type)))
       (packageNumber . ,(~a (length parcel-dimensions)))
       (packageWeight . ,(~a weight))
@@ -205,8 +211,16 @@
       (insuredValue . ,(pp-cents insured-value))
       (awbPayment . "1") ;; client
       (awbRecipient . ,recipient)
-      (parcels . ,parcel-dimensions)))
-  (post c "/api/awb/estimate-cost" #:form (arraify fields)))
+      (parcels . ,parcel-dimensions)
+      (clientInternalReference . ,reference)))
+  (define endpoint
+    (if estimate?
+        "/api/awb/estimate-cost"
+        "/api/awb"))
+  (post c endpoint #:form (arraify fields)))
+
+(define (delete-awb! awb [c (current-client)])
+  (void (delete c (~a "/api/awb/" awb))))
 
 (define (get-awb-status awb [c (current-client)])
   (get c (~a "/api/client/awb/" awb "/status")))
