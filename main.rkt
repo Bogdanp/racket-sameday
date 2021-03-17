@@ -87,7 +87,7 @@
   logistic-circle
   [(delivery-agency samedayDeliveryAgency)]
   [(pickup-agency samedayPickupAgency)]
-  extra-km))
+  [(extra-km extraKM)]))
 
 (json-view
  contact
