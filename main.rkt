@@ -106,8 +106,9 @@
   [(county-id county)]
   address
   name
-  phone
-  email))
+  [(phone phoneNumber)]
+  email
+  [(type personType) #:reader ->person-type #:writer person-type->]))
 
 (json-view
  awb
@@ -301,6 +302,17 @@
 
 
 ;; help ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (->person-type v)
+  (case v
+    [(1) 'company]
+    [else 'individual]))
+
+(define (person-type-> t)
+  (case t
+    [(individual) 0]
+    [(company) 1]
+    [else (raise-argument-error 'person-type-> "(or/c 'individual 'company)" t)]))
 
 (define (maybe-~a v)
   (and v (~a v)))

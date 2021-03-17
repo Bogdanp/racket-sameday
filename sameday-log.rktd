@@ -3,7 +3,7 @@
  ((3) 0 () 0 () () (c values c (void)))
  #""
  #"")
-((recipient)
+((recipient #:type 'individual)
  ((3)
   0
   ()
@@ -16,12 +16,13 @@
    (h
     -
     ()
+    (phoneNumber . #f)
     (email . #f)
     (county . #f)
     (name . #f)
+    (personType . 0)
     (city . #f)
-    (address . #f)
-    (phone . #f))))
+    (address . #f))))
  #""
  #"")
 ((define a-recipient
@@ -37,7 +38,9 @@
     #:phone
     "1234567890"
     #:email
-    "john.doe@example.com"))
+    "john.doe@example.com"
+    #:type
+    'individual))
  ((3) 0 () 0 () () (c values c (void)))
  #""
  #"")
@@ -54,12 +57,13 @@
    (h
     -
     ()
+    (phoneNumber . "1234567890")
     (email . "john.doe@example.com")
     (county . 2)
     (name . "John Doe")
+    (personType . 0)
     (city . 1)
-    (address . "111 Example St.")
-    (phone . "1234567890"))))
+    (address . "111 Example St."))))
  #""
  #"")
 ((recipient-name a-recipient) ((3) 0 () 0 () () (q values "John Doe")) #"" #"")

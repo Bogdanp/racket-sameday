@@ -64,7 +64,7 @@ for every field.
 
 @interaction[
 #:eval log-eval
-(recipient)
+(recipient #:type 'individual)
 
 (code:line)
 (define a-recipient
@@ -74,7 +74,8 @@ for every field.
   #:address "111 Example St."
   #:name "John Doe"
   #:phone "1234567890"
-  #:email "john.doe@example.com"))
+  #:email "john.doe@example.com"
+  #:type 'individual))
 a-recipient
 
 (code:line)
@@ -116,13 +117,15 @@ a-recipient
                       [#:address address string?]
                       [#:name name string?]
                       [#:phone phone string?]
-                      [#:email email string?]) recipient?]
+                      [#:email email string?]
+                      [#:type type (or/c 'individual 'company)]) recipient?]
   @defproc[(recipient-city-id [r recipient?]) exact-positive-integer?]
   @defproc[(recipient-county-id [r recipient?]) exact-positive-integer?]
   @defproc[(recipient-address [r recipient?]) string?]
   @defproc[(recipient-name [r recipient?]) string?]
   @defproc[(recipient-phone [r recipient?]) string?]
   @defproc[(recipient-email [r recipient?]) string?]
+  @defproc[(recipient-type [r recipient?]) (or/c 'individual 'company)]
 )]
 
 @deftogether[(
