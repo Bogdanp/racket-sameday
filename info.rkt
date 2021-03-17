@@ -1,6 +1,6 @@
 #lang info
 
-(define version "0.0")
+(define version "1.0")
 (define collection "sameday")
 (define deps '("base"
                "gregor-lib"
