@@ -260,7 +260,7 @@ a-recipient
   @defproc[(pickup-point-city-id [p pickup-point?]) exact-positive-integer?]
   @defproc[(pickup-point-address [p pickup-point?]) string?]
   @defproc[(pickup-point-default? [p pickup-point?]) boolean?]
-  @defproc[(pickup-point-contacts [p pickup-point?]) (listof contact-person?)]
+  @defproc[(pickup-point-contacts [p pickup-point?]) (listof contact?)]
   @defproc[(pickup-point-alias [p pickup-point?]) string?]
 )]
 
