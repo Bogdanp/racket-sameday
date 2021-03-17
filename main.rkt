@@ -26,6 +26,7 @@
                      #:insured-value cents/c
                      #:cod-amount cents/c
                      #:client client?
+                     #:reference string?
                      #:estimate? boolean?)
                     (or/c awb? awb-estimate?))]
   [delete-awb! (->* (string?) (client?) void?)]
