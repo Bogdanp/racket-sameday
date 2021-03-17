@@ -100,6 +100,11 @@ a-recipient
   A parameter that holds the current Sameday API client.
 }
 
+@defparam[current-client-root root string? #:value "https://api.sameday.ro"]{
+  A parameter that holds the current API root.  All request URLs are
+  relative to this address.
+}
+
 @subsection{AWB}
 
 @defthing[cents/c (and/c exact-integer? (>=/c 100))]
