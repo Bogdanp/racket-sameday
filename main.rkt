@@ -24,7 +24,7 @@
                     (#:package-type package-type/c
                      #:parcel-dimensions (listof parcel-dimensions?)
                      #:insured-value cents/c
-                     #:cod-amount cents/c
+                     #:cod-amount (or/c 0 cents/c)
                      #:client client?
                      #:reference string?
                      #:estimate? boolean?)
