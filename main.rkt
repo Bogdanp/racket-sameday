@@ -113,7 +113,7 @@
 (json-view
  awb
  ([(number awbNumber)]
-  [cost #:reader number->cents #:writer pp-cents]
+  [(cost awbCost) #:reader number->cents #:writer pp-cents]
   parcels))
 
 (json-view
