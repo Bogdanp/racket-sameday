@@ -105,6 +105,7 @@
  ([(city-id city)]
   [(county-id county)]
   address
+  postal-code
   name
   [(phone phoneNumber)]
   email

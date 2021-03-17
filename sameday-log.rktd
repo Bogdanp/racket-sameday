@@ -20,9 +20,10 @@
     (email . #f)
     (county . #f)
     (name . #f)
-    (personType . 0)
     (city . #f)
-    (address . #f))))
+    (address . #f)
+    (personType . 0)
+    (postalCode . #f))))
  #""
  #"")
 ((define a-recipient
@@ -61,9 +62,10 @@
     (email . "john.doe@example.com")
     (county . 2)
     (name . "John Doe")
-    (personType . 0)
     (city . 1)
-    (address . "111 Example St."))))
+    (address . "111 Example St.")
+    (personType . 0)
+    (postalCode . #f))))
  #""
  #"")
 ((recipient-name a-recipient) ((3) 0 () 0 () () (q values "John Doe")) #"" #"")
