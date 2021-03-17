@@ -8,5 +8,6 @@
 (define build-deps '("gregor-doc"
                      "racket-doc"
                      "rackunit-lib"
+                     "sandbox-lib"
                      "scribble-lib"))
 (define scribblings '(("sameday.scrbl")))

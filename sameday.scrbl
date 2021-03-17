@@ -1,6 +1,9 @@
 #lang scribble/manual
 
-@(require (for-label (except-in gregor date date?)
+@(require racket/runtime-path
+          racket/sandbox
+          scribble/example
+          (for-label (except-in gregor date date?)
                      json
                      racket/base
                      racket/contract
@@ -40,8 +43,43 @@ Alternatively, all API calls can be provided an explicit client:
 (get-services c)
 ]
 
+
+@section{Accessors}
+
+@; Blatantly copied from sql-lib!
+@(begin
+   (define-syntax-rule (interaction e ...) (examples #:label #f e ...))
+   (define-runtime-path log-file "sameday-log.rktd")
+   (define log-mode (if (getenv "SAMEDAY_RECORD") 'record 'replay))
+   (define (make-log-eval log-file)
+     (define ev (make-log-based-eval log-file log-mode))
+     (begin0 ev
+       (ev '(require sameday (for-label sameday)))))
+   (define log-eval (make-log-eval log-file)))
+
 Most calls return @racket[jsexpr?] values and special, racket-y,
-accessors are provided for each data type.
+accessors are provided for each data type.  Every data type also
+provides a smart constructor that takes in optional keyword arguments
+for every field.
+
+@interaction[
+#:eval log-eval
+(recipient)
+
+(code:line)
+(define a-recipient
+ (recipient
+  #:city-id 1
+  #:county-id 2
+  #:address "111 Example St."
+  #:name "John Doe"
+  #:phone "1234567890"
+  #:email "john.doe@example.com"))
+a-recipient
+
+(code:line)
+(recipient-name a-recipient)
+]
 
 
 @section{Reference}
@@ -68,6 +106,12 @@ accessors are provided for each data type.
 
 @deftogether[(
   @defproc[(recipient? [v any/c]) boolean?]
+  @defproc[(recipient [#:city-id city-id exact-positive-integer?]
+                      [#:county-id county-id exact-positive-integer?]
+                      [#:address address string?]
+                      [#:name name string?]
+                      [#:phone phone string?]
+                      [#:email email string?]) recipient?]
   @defproc[(recipient-city-id [r recipient?]) exact-positive-integer?]
   @defproc[(recipient-county-id [r recipient?]) exact-positive-integer?]
   @defproc[(recipient-address [r recipient?]) string?]
